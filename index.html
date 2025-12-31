@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <title>EECO 导航</title>
+    <style>
+        /* 全局样式 */
+        body {
+            background: linear-gradient(135deg, #020b18 0%, #081120 100%);
+            color: #e0f7ff;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav {
+            background: rgba(10, 22, 41, 0.8);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 8px rgba(10, 22, 41, 0.5);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* 时间显示样式 */
+        #time-display {
+            text-align: center;
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #0099ff;
+            text-shadow: 0 0 12px rgba(0, 153, 255, 0.6), 0 0 24px rgba(0, 153, 255, 0.4), 0 0 36px rgba(0, 153, 255, 0.2);
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 搜索栏样式 */
+        .search-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+            gap: 10px;
+        }
+
+        .search-form input {
+            background-color: rgba(21, 36, 58, 0.8);
+            color: #e0f7ff;
+            border: 2px solid rgba(0, 153, 255, 0.3);
+            border-radius: 30px;
+            padding: 14px 24px;
+            width: 100%;
+            font-size: 18px;
+            box-shadow: 0 0 8px rgba(0, 153, 255, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .search-form input:focus {
+            border-color: #0099ff;
+            outline: none;
+            box-shadow: 0 0 16px rgba(0, 153, 255, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-form button {
+            background: linear-gradient(135deg, #0099ff 0%, #0077cc 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 14px 24px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 153, 255, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-form button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 153, 255, 0.6);
+        }
+
+        .search-engine-select {
+            background-color: rgba(21, 36, 58, 0.8);
+            color: #e0f7ff;
+            border: 2px solid rgba(0, 153, 255, 0.3);
+            border-radius: 30px;
+            padding: 14px 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%23e0f7ff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            background-size: 18px;
+            min-width: 120px;
+        }
+
+        .search-engine-select:focus {
+            border-color: #0099ff;
+            outline: none;
+            background-color: rgba(21, 36, 58, 1);
+            box-shadow: 0 0 16px rgba(0, 153, 255, 0.4);
+        }
+
+        /* 搜索历史记录样式 */
+        #search-history {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: rgba(21, 36, 58, 0.8);
+            border: 2px solid rgba(0, 153, 255, 0.3);
+            border-radius: 15px;
+            padding: 10px;
+            box-shadow: 0 0 8px rgba(0, 153, 255, 0.2);
+            display: none;
+        }
+
+        #search-history ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #search-history li {
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(0, 153, 255, 0.1);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #search-history li:last-child {
+            border-bottom: none;
+        }
+
+        #search-history li:hover {
+            background-color: rgba(0, 153, 255, 0.1);
+        }
+
+        /* 导航卡片样式 */
+        .nav-card {
+            background: rgba(10, 22, 41, 0.6);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(0, 153, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(10, 22, 41, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .nav-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 153, 255, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0, 153, 255, 0.3);
+            border-color: #0099ff;
+        }
+
+        .nav-card:hover::before {
+            opacity: 1;
+        }
+
+        .nav-card i {
+            font-size: 56px;
+            color: #0099ff;
+            margin-bottom: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-card h2 {
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+
+        .nav-card p {
+            font-size: 15px;
+            color: #ccc;
+        }
+
+        /* 页脚样式 */
+        footer {
+            background: rgba(6, 14, 26, 0.8);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -4px 8px rgba(6, 14, 26, 0.5);
+            padding: 15px;
+            text-align: center;
+            color: #999;
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+        }
+
+        /* 标题动画 */
+        @keyframes titleFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            animation: titleFadeIn 1s ease forwards;
+        }
+    </style>
+</head>
+
+<body class="font-sans">
+    <!-- 导航栏 -->
+    <nav class="p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#" class="text-xl font-bold text-white">EECO 导航</a>
+            <div class="space-x-4">
+                <a href="#" class="text-white hover:text-sky-300">首页</a>
+                <a href="about.html" class="text-white hover:text-sky-300">关于我们</a>
+                <a href="#" class="text-white hover:text-sky-300">联系我们</a>
+            </div>
+        </div>
+    </nav>
+    <!-- 主体内容 -->
+    <main class="container mx-auto p-8">
+        <h1 class="text-3xl font-bold mb-4">欢迎来到 EECO 导航</h1>
+        <p class="mb-4 fade-in-up">在这里你可以快速访问各类网站。</p>
+        <!-- 时间显示 -->
+        <div id="time-display" class="fade-in-up"></div>
+        <!-- 搜索栏 -->
+        <div class="flex justify-center items-center py-8 fade-in-up">
+            <form class="search-form w-full md:w-3/4 lg:w-2/3">
+                <select class="search-engine-select" id="searchEngine">
+                    <option value="https://www.baidu.com/s?wd=">百度</option>
+                    <option value="https://www.google.com/search?q=">谷歌</option>
+                    <option value="https://www.bing.com/search?q=">必应</option>
+                </select>
+                <input type="text" name="searchQuery" placeholder="搜索网站">
+                <button type="submit">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </form>
+        </div>
+        <!-- 搜索历史记录 -->
+        <div id="search-history" class="fade-in-up">
+            <ul></ul>
+        </div>
+        <!-- 导航链接卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 fade-in-up">
+            <a href="https://fanyi.baidu.com/" class="nav-card">
+                <i class="fa-solid fa-language"></i>
+                <h2>翻译</h2>
+                <p>百度翻译网站，提供便捷的翻译服务。</p>
+            </a>
+            <a href="https://image.baidu.com/" class="nav-card">
+                <i class="fa-solid fa-image"></i>
+                <h2>图片</h2>
+                <p>百度图片搜索，海量图片任你搜。</p>
+            </a>
+            <a href="https://mail.qq.com/" class="nav-card">
+                <i class="fa-solid fa-envelope"></i>
+                <h2>邮箱</h2>
+                <p>腾讯邮箱，便捷的邮件服务。</p>
+            </a>
+            <a href="https://bilibili.com/" class="nav-card">
+                <i class="fa-brands fa-bilibili"></i>
+                <h2>bilibili</h2>
+                <p>哔哩哔哩，年轻人的潮流文化娱乐社区。</p>
+            </a>
+            <a href="https://music.163.com/" class="nav-card">
+                <i class="fa-solid fa-music"></i>
+                <h2>网易云音乐</h2>
+                <p>海量音乐资源，个性化推荐。</p>
+            </a>
+            <a href="https://www.douyin.com/" class="nav-card">
+                <i class="fa-brands fa-tiktok"></i>
+                <h2>抖音</h2>
+                <p>记录美好生活，热门短视频平台。</p>
+            </a>
+            <a href="https://www.deepseek.com/" class="nav-card">
+                <i class="fa-solid fa-robot"></i>
+                <h2>DeepSeek</h2>
+                <p>先进的AI技术平台。</p>
+            </a>
+            <a href="https://doubao.com/" class="nav-card">
+                <i class="fa-solid fa-question"></i>
+                <h2>豆包</h2>
+                <p>智能问答，提供专业知识解答。</p>
+            </a>
+            <a href="https://www.zhihu.com/" class="nav-card">
+                <i class="fa-solid fa-lightbulb"></i>
+                <h2>知乎</h2>
+                <p>中文互联网高质量的问答社区和创作者聚集的原创内容平台。</p>
+            </a>
+            <a href="https://www.taobao.com/" class="nav-card">
+                <i class="fa-solid fa-shopping-cart"></i>
+                <h2>淘宝</h2>
+                <p>亚洲较大的网上交易平台，提供各类商品。</p>
+            </a>
+            <a href="https://www.csdn.net/" class="nav-card">
+                <i class="fa-solid fa-code"></i>
+                <h2>CSDN</h2>
+                <p>全球知名中文IT技术交流平台，提供大量技术文章和资源。</p>
+            </a>
+            <a href="https://www.163.com/" class="nav-card">
+                <i class="fa-solid fa-newspaper"></i>
+                <h2>网易</h2>
+                <p>综合门户网站，提供新闻、娱乐、财经等多种信息。</p>
+            </a>
+            <a href="https://www.jd.com/" class="nav-card">
+                <i class="fa-solid fa-truck-fast"></i>
+                <h2>京东</h2>
+                <p>知名综合电商平台，商品品质有保障。</p>
+            </a>
+            <a href="https://www.tmall.com/" class="nav-card">
+                <i class="fa-solid fa-store"></i>
+                <h2>天猫</h2>
+                <p>知名的B2C购物平台，汇聚众多品牌商家。</p>
+            </a>
+            <a href="https://www.github.com/" class="nav-card">
+                <i class="fa-brands fa-github"></i>
+                <h2>GitHub</h2>
+                <p>全球最大的开源代码托管平台，开发者的聚集地。</p>
+            </a>
+            <a href="https://www.weibo.com/" class="nav-card">
+                <i class="fa-brands fa-weibo"></i>
+                <h2>微博</h2>
+                <p>信息传播与社交互动的重要平台。</p>
+            </a>
+			<a href="https://fanyi.baidu.com/" class="nav-card">
+                <i class="fa-solid fa-language"></i>
+                <h2>翻译</h2>
+                <p>百度翻译网站，提供便捷的翻译服务。</p>
+            </a>
+        </div>
+    </main>
+    <!-- 页脚 -->
+    <footer class="p-4">
+        <p>© 2025 EECO 导航. 保留所有权利.</p>
+    </footer>
+    <script>
+        const form = document.querySelector('.search-form');
+        const searchEngineSelect = document.getElementById('searchEngine');
+        const searchInput = form.querySelector('input[name="searchQuery"]');
+        const searchHistory = document.getElementById('search-history').querySelector('ul');
+        const searchHistoryDiv = document.getElementById('search-history');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const selectedEngine = searchEngineSelect.value;
+            const searchQuery = searchInput.value;
+            const searchUrl = selectedEngine + encodeURIComponent(searchQuery);
+
+            // 添加搜索记录到历史记录
+            if (searchQuery) {
+                addSearchHistory(searchQuery);
+            }
+
+            window.location.href = searchUrl;
+        });
+
+        searchInput.addEventListener('focus', function () {
+            if (getSearchHistory().length > 0) {
+                searchHistoryDiv.style.display = 'block';
+            }
+        });
+
+        searchInput.addEventListener('blur', function () {
+            setTimeout(() => {
+                searchHistoryDiv.style.display = 'none';
+            }, 200);
+        });
+
+        function addSearchHistory(query) {
+            const historyList = getSearchHistory();
+            if (!historyList.includes(query)) {
+                historyList.unshift(query);
+                if (historyList.length > 5) {
+                    historyList.pop();
+                }
+                localStorage.setItem('searchHistory', JSON.stringify(historyList));
+                renderSearchHistory();
+            }
+        }
+
+        function getSearchHistory() {
+            return JSON.parse(localStorage.getItem('searchHistory')) || [];
+        }
+
+        function renderSearchHistory() {
+            const historyList = getSearchHistory();
+            searchHistory.innerHTML = '';
+            historyList.forEach(query => {
+                const li = document.createElement('li');
+                li.textContent = query;
+
+                li.addEventListener('click', () => {
+                    const selectedEngine = searchEngineSelect.value;
+                    const searchUrl = selectedEngine + encodeURIComponent(query);
+                    window.location.href = searchUrl;
+                });
+                searchHistory.appendChild(li);
+            });
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const timeString = `${hours}:${minutes}:${seconds}`;
+            document.getElementById('time-display').textContent = timeString;
+        }
+
+        // 初始调用
+        updateTime();
+        // 每秒更新一次时间
+        setInterval(updateTime, 1000);
+
+        // 页面加载时渲染搜索历史记录
+        renderSearchHistory();
+    </script>
+</body>
+
+</html>
+    
