@@ -1,477 +1,1295 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
-    <title>EECO 导航</title>
+    <title>EECO导航</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        /* 全局样式 */
+        :root {
+            --overlay-light: rgba(0, 0, 0, 0.2);
+            --overlay-dark: rgba(0, 0, 0, 0.55);
+            --bg-container: rgba(255, 255, 255, 0.12);
+            --bg-card: rgba(255, 255, 255, 0.15);
+            --bg-input: rgba(255, 255, 255, 0.95);
+            --text: #fff;
+            --text-secondary: rgba(255, 255, 255, 0.85);
+            --gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            --gradient-hover: linear-gradient(135deg, #8edce3 0%, #fbc2eb 100%);
+            --border-color: rgba(255, 255, 255, 0.25);
+            --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.25);
+            --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.35);
+            --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        body.dark-mode {
+            --bg-container: rgba(0, 0, 0, 0.38);
+            --bg-card: rgba(255, 255, 255, 0.08);
+            --bg-input: rgba(50, 50, 50, 0.85);
+            --text: #e0e0e0;
+            --text-secondary: rgba(224, 224, 224, 0.8);
+            --border-color: rgba(255, 255, 255, 0.15);
+        }
+        * {
+            box-sizing: border-box;
+        }
         body {
-            background: linear-gradient(135deg, #020b18 0%, #081120 100%);
-            color: #e0f7ff;
-            font-family: 'Inter', sans-serif;
             margin: 0;
             padding: 0;
+            font-family: 'Noto Sans SC', sans-serif;
+            background: #000 center/cover no-repeat fixed;
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+            transition: background-color 0.5s ease;
         }
-
-        nav {
-            background: rgba(10, 22, 41, 0.8);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 8px rgba(10, 22, 41, 0.5);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: var(--overlay-light);
+            pointer-events: none;
+            transition: background 0.5s ease;
+            z-index: 0;
         }
-
-        a {
-            text-decoration: none;
-            color: inherit;
+        body.dark-mode::before {
+            background: var(--overlay-dark);
         }
-
-        /* 时间显示样式 */
-        #time-display {
+        .container {
+            position: relative;
+            z-index: 1;
+            background: var(--bg-container);
+            backdrop-filter: blur(16px);
+            padding: 40px 30px;
+            border-radius: 28px;
+            box-shadow: var(--shadow-md);
+            max-width: 1100px;
+            width: 92%;
+            margin: 24px auto;
+            border: 1px solid var(--border-color);
             text-align: center;
-            font-size: 36px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #0099ff;
-            text-shadow: 0 0 12px rgba(0, 153, 255, 0.6), 0 0 24px rgba(0, 153, 255, 0.4), 0 0 36px rgba(0, 153, 255, 0.2);
-            animation: fadeIn 1s ease-out forwards;
+            transition: var(--transition);
         }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .container:hover {
+            box-shadow: var(--shadow-lg);
         }
-
-        /* 搜索栏样式 */
+        .header {
+            margin-bottom: 30px;
+        }
+        .controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin: 0 0 24px;
+            flex-wrap: wrap;
+        }
+        .control-btn {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid var(--border-color);
+            color: var(--text);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.3em;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: var(--shadow-sm);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        h1 {
+            font-size: 3em;
+            margin: 0 0 12px;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            font-weight: 700;
+            background: linear-gradient(135deg, #a8edea, #fed6e3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hitokoto-wrapper {
+            margin: 24px 0 32px;
+            cursor: pointer;
+            padding: 16px 24px;
+            border-radius: 24px;
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+        }
+        .hitokoto-wrapper:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+        }
+        .hitokoto {
+            font-size: 1.3em;
+            font-style: italic;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+        .hitokoto-source {
+            font-size: 0.95em;
+            opacity: 0.75;
+            margin-top: 8px;
+            color: var(--text-secondary);
+        }
+        .info-bar {
+            margin-bottom: 36px;
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            font-size: 1.1em;
+        }
+        .time, .weather {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px 22px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(8px);
+        }
+        .time:hover, .weather:hover {
+            background: rgba(255, 255, 255, 0.18);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+        .search-wrapper {
+            position: relative;
+            margin-bottom: 48px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
         .search-form {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            max-width: 600px;
-            margin: 0 auto;
-            gap: 10px;
+            background: var(--bg-input);
+            border-radius: 50px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
-
-        .search-form input {
-            background-color: rgba(21, 36, 58, 0.8);
-            color: #e0f7ff;
-            border: 2px solid rgba(0, 153, 255, 0.3);
-            border-radius: 30px;
-            padding: 14px 24px;
-            width: 100%;
-            font-size: 18px;
-            box-shadow: 0 0 8px rgba(0, 153, 255, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        .search-form:hover {
+            box-shadow: var(--shadow-lg);
+        }
+        .search-icon {
+            position: absolute;
+            left: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #555;
+            font-size: 1.3em;
+            pointer-events: none;
+            transition: color 0.3s ease;
+        }
+        .search-input {
+            flex: 1;
+            padding: 20px 24px 20px 60px;
+            font-size: 1.15em;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: #333;
             transition: all 0.3s ease;
         }
-
-        .search-form input:focus {
-            border-color: #0099ff;
-            outline: none;
-            box-shadow: 0 0 16px rgba(0, 153, 255, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        .search-input::placeholder {
+            color: #888;
+            transition: color 0.3s ease;
         }
-
-        .search-form button {
-            background: linear-gradient(135deg, #0099ff 0%, #0077cc 100%);
-            color: white;
+        .search-input:focus {
+            background: rgba(255, 255, 255, 0.98);
+        }
+        body.dark-mode .search-input {
+            color: #e0e0e0;
+        }
+        body.dark-mode .search-input::placeholder {
+            color: #aaa;
+        }
+        body.dark-mode .search-icon {
+            color: #aaa;
+        }
+        .search-select, .search-button {
             border: none;
-            border-radius: 30px;
-            padding: 14px 24px;
             cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0, 153, 255, 0.5);
+            transition: var(--transition);
+        }
+        .search-select {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border-left: 1px solid rgba(200, 200, 200, 0.4);
+            border-right: 1px solid rgba(200, 200, 200, 0.4);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-position: right 20px center;
+            background-repeat: no-repeat;
+            background-size: 1.1em;
+            padding: 20px 50px 20px 24px;
+            font-weight: 600;
+            font-size: 1.15em;
+            letter-spacing: 0.5px;
+            border-radius: 0;
+            transition: var(--transition);
+        }
+        .search-select:hover {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: inset 0 0 0 2px rgba(168, 237, 234, 0.5);
+        }
+        .search-select:focus {
+            outline: none;
+            box-shadow: inset 0 0 0 2px rgba(168, 237, 234, 0.8), 0 0 0 3px rgba(168, 237, 234, 0.2);
+        }
+        body.dark-mode .search-select {
+            background-color: rgba(55, 55, 55, 0.95);
+            color: #e0e0e0;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23aaa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            border-left: 1px solid rgba(120, 120, 120, 0.4);
+            border-right: 1px solid rgba(120, 120, 120, 0.4);
+            font-weight: 600;
+            font-size: 1.15em;
+            letter-spacing: 0.5px;
+        }
+        body.dark-mode .search-select:hover {
+            background-color: rgba(70, 70, 70, 0.95);
+            box-shadow: inset 0 0 0 2px rgba(168, 237, 234, 0.4);
+        }
+        body.dark-mode .search-select:focus {
+            box-shadow: inset 0 0 0 2px rgba(168, 237, 234, 0.7), 0 0 0 3px rgba(168, 237, 234, 0.2);
+        }
+        .search-button {
+            background: var(--gradient);
+            color: #333;
+            font-weight: 700;
+            padding: 0 32px;
+            font-size: 1.15em;
+            letter-spacing: 0.5px;
+            border-radius: 0 50px 50px 0;
+            transition: var(--transition);
+        }
+        .search-button:hover {
+            background: var(--gradient-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(168, 237, 234, 0.6);
+        }
+        .search-history {
+            margin-top: 16px;
+            padding: 0 15px;
+        }
+        .search-history-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .history-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+        }
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.18);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-sm);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        .history-keyword {
+            flex: 1;
+            font-size: 1em;
+            font-weight: 500;
+            color: var(--text);
+        }
+        .history-time {
+            font-size: 0.85em;
+            opacity: 0.7;
+            color: var(--text-secondary);
+            margin-right: 12px;
+        }
+        .history-delete {
+            font-size: 0.9em;
+            color: #ff6b6b;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding: 6px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.2);
         }
-
-        .search-form button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0, 153, 255, 0.6);
+        .history-item:hover .history-delete {
+            opacity: 1;
         }
-
-        .search-engine-select {
-            background-color: rgba(21, 36, 58, 0.8);
-            color: #e0f7ff;
-            border: 2px solid rgba(0, 153, 255, 0.3);
-            border-radius: 30px;
-            padding: 14px 24px;
+        .history-delete:hover {
+            background: rgba(255, 107, 107, 0.25);
+            border-color: rgba(255, 107, 107, 0.4);
+        }
+        .clear-history {
+            color: #ff6b6b;
+            font-size: 0.95em;
             cursor: pointer;
-            transition: all 0.3s ease;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url('data:image/svg+xml;utf8,<svg fill="%23e0f7ff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
-            background-repeat: no-repeat;
-            background-position: right 20px center;
-            background-size: 18px;
-            min-width: 120px;
+            text-align: center;
+            padding: 10px 20px;
+            border-radius: 24px;
+            transition: var(--transition);
+            background: rgba(255, 107, 107, 0.12);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(255, 107, 107, 0.2);
         }
-
-        .search-engine-select:focus {
-            border-color: #0099ff;
-            outline: none;
-            background-color: rgba(21, 36, 58, 1);
-            box-shadow: 0 0 16px rgba(0, 153, 255, 0.4);
+        .clear-history:hover {
+            background: rgba(255, 107, 107, 0.25);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+            border-color: rgba(255, 107, 107, 0.4);
         }
-
-        /* 搜索历史记录样式 */
-        #search-history {
-            max-width: 600px;
-            margin: 20px auto;
-            background-color: rgba(21, 36, 58, 0.8);
-            border: 2px solid rgba(0, 153, 255, 0.3);
-            border-radius: 15px;
-            padding: 10px;
-            box-shadow: 0 0 8px rgba(0, 153, 255, 0.2);
-            display: none;
+        .categories {
+            text-align: left;
         }
-
-        #search-history ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        #search-history li {
-            padding: 8px 12px;
-            border-bottom: 1px solid rgba(0, 153, 255, 0.1);
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        #search-history li:last-child {
-            border-bottom: none;
-        }
-
-        #search-history li:hover {
-            background-color: rgba(0, 153, 255, 0.1);
-        }
-
-        /* 导航卡片样式 */
-        .nav-card {
-            background: rgba(10, 22, 41, 0.6);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(0, 153, 255, 0.1);
+        .category {
+            margin-bottom: 32px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 4px 8px rgba(10, 22, 41, 0.5);
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            padding: 24px;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+        .category:hover {
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: var(--shadow-sm);
+        }
+        .category h3 {
+            margin: 0 0 20px;
+            font-size: 1.6em;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: var(--transition);
+            padding: 8px 0;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+        .category h3:hover {
+            color: var(--text);
+        }
+        .category h3 i {
+            transition: var(--transition);
+        }
+        .links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+        .link-item {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            padding: 24px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             align-items: center;
-            text-align: center;
+            gap: 14px;
+            position: relative;
+            min-height: 120px;
+            justify-content: center;
         }
-
-        .nav-card::before {
-            content: "";
+        .link-item.custom::after {
+            content: '×';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 153, 255, 0.1);
+            top: 8px;
+            right: 12px;
+            font-size: 1.3em;
+            color: #ff6b6b;
+            cursor: pointer;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: var(--transition);
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 107, 107, 0.15);
+            border: 1px solid rgba(255, 107, 107, 0.2);
         }
-
-        .nav-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 8px 16px rgba(0, 153, 255, 0.3);
-            border-color: #0099ff;
-        }
-
-        .nav-card:hover::before {
+        .link-item.custom:hover::after {
             opacity: 1;
+            transform: scale(1.1);
         }
-
-        .nav-card i {
-            font-size: 56px;
-            color: #0099ff;
-            margin-bottom: 15px;
-            transition: color 0.3s ease;
+        .link-item img {
+            width: 52px;
+            height: 52px;
+            object-fit: contain;
+            transition: var(--transition);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px;
         }
-
-        .nav-card h2 {
-            font-size: 22px;
-            margin-bottom: 12px;
+        .link-item:hover {
+            transform: translateY(-10px) scale(1.04);
+            background: rgba(255, 255, 255, 0.22);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(255, 255, 255, 0.4);
         }
-
-        .nav-card p {
-            font-size: 15px;
-            color: #ccc;
+        .link-item:hover img {
+            transform: scale(1.15) rotate(5deg);
+            background: rgba(255, 255, 255, 0.2);
         }
-
-        /* 页脚样式 */
-        footer {
-            background: rgba(6, 14, 26, 0.8);
+        .link-item span {
+            font-size: 1.05em;
+            line-height: 1.4;
+            transition: var(--transition);
+        }
+        .link-item:hover span {
+            color: var(--text);
+        }
+        .hidden {
+            display: none;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(10px);
-            box-shadow: 0 -4px 8px rgba(6, 14, 26, 0.5);
-            padding: 15px;
-            text-align: center;
-            color: #999;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            animation: fadeIn 0.3s ease;
         }
-
+        .modal-content {
+            background: var(--bg-container);
+            padding: 40px 32px;
+            border-radius: 28px;
+            width: 90%;
+            max-width: 520px;
+            color: var(--text);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.4s ease;
+            transition: var(--transition);
+        }
+        .modal-content:hover {
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        .modal h2 {
+            margin: 0 0 24px;
+            font-size: 1.8em;
+            color: var(--text);
+        }
+        .modal input, .modal select {
+            width: 100%;
+            padding: 16px 20px;
+            margin: 12px 0;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-input);
+            color: #333;
+            font-size: 1.1em;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+        .modal input:focus, .modal select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(168, 237, 234, 0.3);
+            border-color: rgba(168, 237, 234, 0.6);
+        }
+        body.dark-mode .modal input, body.dark-mode .modal select {
+            color: var(--text);
+        }
+        .modal button {
+            padding: 14px 32px;
+            background: var(--gradient);
+            color: #333;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            margin: 8px 6px;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: var(--transition);
+            letter-spacing: 0.5px;
+        }
+        .modal button:hover {
+            background: var(--gradient-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(168, 237, 234, 0.5);
+        }
+        .modal button#cancelLink {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--text);
+            border: 1px solid var(--border-color);
+        }
+        .modal button#cancelLink:hover {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: var(--shadow-sm);
+        }
+        #todoPanel {
+            display: none;
+            position: fixed;
+            right: 20px;
+            top: 100px;
+            width: 340px;
+            background: var(--bg-container);
+            backdrop-filter: blur(16px);
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: var(--shadow-lg);
+            z-index: 99;
+            max-height: 70vh;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            animation: slideInRight 0.4s ease;
+            transition: var(--transition);
+        }
+        #todoPanel:hover {
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+        #todoPanel h3 {
+            margin: 0 0 20px;
+            font-size: 1.5em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text);
+        }
+        #todoPanel h3 span {
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+        #todoPanel h3 span:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.2);
+        }
+        #todoPanel div:first-of-type {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        #todoInput {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--bg-input);
+            color: #333;
+            font-size: 1em;
+            transition: var(--transition);
+        }
+        #todoInput:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(168, 237, 234, 0.3);
+            border-color: rgba(168, 237, 234, 0.6);
+        }
+        body.dark-mode #todoInput {
+            color: var(--text);
+        }
+        #addTodoBtn {
+            padding: 12px 20px;
+            background: var(--gradient);
+            color: #333;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            font-size: 0.95em;
+        }
+        #addTodoBtn:hover {
+            background: var(--gradient-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(168, 237, 234, 0.5);
+        }
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+        .todo-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(-4px);
+            box-shadow: var(--shadow-sm);
+        }
+        .todo-item input[type=checkbox] {
+            transform: scale(1.4);
+            accent-color: #a8edea;
+            cursor: pointer;
+        }
+        .todo-item span {
+            flex: 1;
+            font-size: 1em;
+            transition: var(--transition);
+        }
+        .todo-item.completed span {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+        .todo-item button {
+            margin-left: auto;
+            background: rgba(255, 107, 107, 0.15);
+            border: 1px solid rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 1.1em;
+            padding: 6px 10px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+        .todo-item button:hover {
+            background: rgba(255, 107, 107, 0.3);
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+        }
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
         /* 动画 */
-        @keyframes fadeInUp {
+        @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(20px);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
             }
         }
-
-        .fade-in-up {
-            animation: fadeInUp 0.8s ease forwards;
-            opacity: 0;
-        }
-
-        /* 标题动画 */
-        @keyframes titleFadeIn {
+        @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(-20px);
+                transform: translateY(30px) scale(0.95);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
-
-        h1 {
-            animation: titleFadeIn 1s ease forwards;
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 32px 20px;
+                margin: 16px auto;
+                border-radius: 24px;
+            }
+            h1 {
+                font-size: 2.4em;
+            }
+            .controls {
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+            .control-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 1.2em;
+            }
+            .hitokoto {
+                font-size: 1.15em;
+            }
+            .info-bar {
+                gap: 16px;
+                margin-bottom: 30px;
+                font-size: 1em;
+            }
+            .time, .weather {
+                padding: 10px 16px;
+                font-size: 0.95em;
+            }
+            .search-form {
+                flex-direction: column;
+                border-radius: 24px;
+                overflow: visible;
+            }
+            .search-input {
+                padding: 20px 24px 20px 56px;
+                border-radius: 24px 24px 0 0;
+            }
+            .search-select {
+                border-left: none;
+                border-right: none;
+                border-top: 1px solid rgba(200, 200, 200, 0.4);
+                border-bottom: 1px solid rgba(200, 200, 200, 0.4);
+                border-radius: 0;
+                padding: 20px 45px 20px 24px;
+                font-size: 1.1em;
+            }
+            body.dark-mode .search-select {
+                border-top: 1px solid rgba(120, 120, 120, 0.4);
+                border-bottom: 1px solid rgba(120, 120, 120, 0.4);
+                border-left: none;
+                border-right: none;
+            }
+            .search-button {
+                border-radius: 0 0 24px 24px;
+                padding: 20px;
+                margin-top: 0;
+            }
+            .links {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+            .link-item {
+                padding: 20px;
+                min-height: 110px;
+            }
+            .link-item img {
+                width: 48px;
+                height: 48px;
+            }
+            .category {
+                padding: 20px;
+                margin-bottom: 28px;
+            }
+            .category h3 {
+                font-size: 1.4em;
+            }
+            #todoPanel {
+                width: 92%;
+                right: 4%;
+                left: 4%;
+                padding: 24px;
+            }
+            .modal-content {
+                padding: 32px 24px;
+            }
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 24px 16px;
+                margin: 12px auto;
+            }
+            h1 {
+                font-size: 2.1em;
+            }
+            .controls {
+                gap: 8px;
+            }
+            .control-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1em;
+            }
+            .hitokoto-wrapper {
+                padding: 12px 16px;
+                margin: 20px 0 28px;
+            }
+            .hitokoto {
+                font-size: 1.1em;
+            }
+            .info-bar {
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+            }
+            .time, .weather {
+                width: 100%;
+                max-width: 220px;
+            }
+            .search-input {
+                font-size: 1.05em;
+                padding: 18px 20px 18px 52px;
+            }
+            .links {
+                grid-template-columns: 1fr;
+            }
+            .link-item {
+                gap: 12px;
+            }
+            .category {
+                padding: 16px;
+            }
+            .category h3 {
+                font-size: 1.3em;
+            }
+            #todoPanel {
+                padding: 20px;
+            }
+        }
+        @media (max-width: 360px) {
+            h1 {
+                font-size: 1.9em;
+            }
+            .hitokoto {
+                font-size: 1.05em;
+            }
+            .search-input {
+                font-size: 1em;
+            }
         }
     </style>
 </head>
-
-<body class="font-sans">
-    <!-- 导航栏 -->
-    <nav class="p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <a href="#" class="text-xl font-bold text-white">EECO 导航</a>
-            <div class="space-x-4">
-                <a href="#" class="text-white hover:text-sky-300">首页</a>
-                <a href="about.html" class="text-white hover:text-sky-300">关于我们</a>
-                <a href="#" class="text-white hover:text-sky-300">联系我们</a>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="controls">
+                <label class="control-btn" title="暗色模式"><i class="fas fa-moon" id="themeIcon"></i><input type="checkbox" id="themeToggle" hidden></label>
+                <label class="control-btn" title="上传背景"><i class="fas fa-camera"></i><input type="file" id="bgUpload" accept="image/*" hidden></label>
+                <button class="control-btn" id="addLinkBtn" title="添加链接"><i class="fas fa-plus"></i></button>
+                <button class="control-btn" id="todoBtn" title="TODO"><i class="fas fa-clipboard-list"></i></button>
+                <a href="about.html" class="control-btn" title="关于" target="_blank"><i class="fas fa-info-circle"></i></a>
             </div>
+            <h1>EECO导航</h1>
         </div>
-    </nav>
-    <!-- 主体内容 -->
-    <main class="container mx-auto p-8">
-        <h1 class="text-3xl font-bold mb-4">欢迎来到 EECO 导航</h1>
-        <p class="mb-4 fade-in-up">在这里你可以快速访问各类网站。</p>
-        <!-- 时间显示 -->
-        <div id="time-display" class="fade-in-up"></div>
-        <!-- 搜索栏 -->
-        <div class="flex justify-center items-center py-8 fade-in-up">
-            <form class="search-form w-full md:w-3/4 lg:w-2/3">
-                <select class="search-engine-select" id="searchEngine">
-                    <option value="https://www.baidu.com/s?wd=">百度</option>
-                    <option value="https://www.google.com/search?q=">谷歌</option>
-                    <option value="https://www.bing.com/search?q=">必应</option>
+
+        <div class="hitokoto-wrapper" id="hitokotoWrapper">
+            <div class="hitokoto" id="hitokoto">加载中...</div>
+            <div class="hitokoto-source" id="hitokoto_source"></div>
+        </div>
+
+        <div class="info-bar">
+            <div class="time" id="time"></div>
+            <div class="weather" id="weather">正在获取位置天气...</div>
+        </div>
+
+        <div class="search-wrapper">
+            <i class="fas fa-search search-icon"></i>
+            <form class="search-form" id="searchForm">
+                <input type="text" class="search-input" id="query" placeholder="输入关键词，开始探索～">
+                <select class="search-select" id="engine">
+                    <option value="baidu" selected>百度</option>
+                    <option value="bing">必应</option>
+                    <option value="google">谷歌</option>
+                    <option value="yandex">Yandex</option>
+                    <option value="360">360搜索</option>
                 </select>
-                <input type="text" name="searchQuery" placeholder="搜索网站">
-                <button type="submit">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
+                <button type="submit" class="search-button">搜索</button>
             </form>
+            <div class="search-history" id="searchHistory"></div>
         </div>
-        <!-- 搜索历史记录 -->
-        <div id="search-history" class="fade-in-up">
-            <ul></ul>
+
+        <div class="categories" id="categories"></div>
+    </div>
+
+    <div class="modal" id="addLinkModal">
+        <div class="modal-content">
+            <h2>添加自定义链接</h2>
+            <input type="text" id="linkName" placeholder="网站名称">
+            <input type="url" id="linkUrl" placeholder="https://example.com">
+            <select id="linkCategory">
+                <option value="常用网站">常用网站</option>
+                <option value="工具">工具</option>
+                <option value="开发">开发</option>
+                <option value="学习">学习</option>
+                <option value="社交">社交</option>
+                <option value="购物">购物</option>
+                <option value="娱乐">娱乐</option>
+                <option value="自定义">自定义（新分类）</option>
+            </select>
+            <input type="text" id="newCategory" placeholder="新分类名称" style="display:none;">
+            <button id="saveLink">保存</button>
+            <button id="cancelLink">取消</button>
         </div>
-        <!-- 导航链接卡片 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 fade-in-up">
-            <a href="https://fanyi.baidu.com/" class="nav-card">
-                <i class="fa-solid fa-language"></i>
-                <h2>翻译</h2>
-                <p>百度翻译网站，提供便捷的翻译服务。</p>
-            </a>
-            <a href="https://image.baidu.com/" class="nav-card">
-                <i class="fa-solid fa-image"></i>
-                <h2>图片</h2>
-                <p>百度图片搜索，海量图片任你搜。</p>
-            </a>
-            <a href="https://mail.qq.com/" class="nav-card">
-                <i class="fa-solid fa-envelope"></i>
-                <h2>邮箱</h2>
-                <p>腾讯邮箱，便捷的邮件服务。</p>
-            </a>
-            <a href="https://bilibili.com/" class="nav-card">
-                <i class="fa-brands fa-bilibili"></i>
-                <h2>bilibili</h2>
-                <p>哔哩哔哩，年轻人的潮流文化娱乐社区。</p>
-            </a>
-            <a href="https://music.163.com/" class="nav-card">
-                <i class="fa-solid fa-music"></i>
-                <h2>网易云音乐</h2>
-                <p>海量音乐资源，个性化推荐。</p>
-            </a>
-            <a href="https://www.douyin.com/" class="nav-card">
-                <i class="fa-brands fa-tiktok"></i>
-                <h2>抖音</h2>
-                <p>记录美好生活，热门短视频平台。</p>
-            </a>
-            <a href="https://www.deepseek.com/" class="nav-card">
-                <i class="fa-solid fa-robot"></i>
-                <h2>DeepSeek</h2>
-                <p>先进的AI技术平台。</p>
-            </a>
-            <a href="https://doubao.com/" class="nav-card">
-                <i class="fa-solid fa-question"></i>
-                <h2>豆包</h2>
-                <p>智能问答，提供专业知识解答。</p>
-            </a>
-            <a href="https://www.zhihu.com/" class="nav-card">
-                <i class="fa-solid fa-lightbulb"></i>
-                <h2>知乎</h2>
-                <p>中文互联网高质量的问答社区和创作者聚集的原创内容平台。</p>
-            </a>
-            <a href="https://www.taobao.com/" class="nav-card">
-                <i class="fa-solid fa-shopping-cart"></i>
-                <h2>淘宝</h2>
-                <p>亚洲较大的网上交易平台，提供各类商品。</p>
-            </a>
-            <a href="https://www.csdn.net/" class="nav-card">
-                <i class="fa-solid fa-code"></i>
-                <h2>CSDN</h2>
-                <p>全球知名中文IT技术交流平台，提供大量技术文章和资源。</p>
-            </a>
-            <a href="https://www.163.com/" class="nav-card">
-                <i class="fa-solid fa-newspaper"></i>
-                <h2>网易</h2>
-                <p>综合门户网站，提供新闻、娱乐、财经等多种信息。</p>
-            </a>
-            <a href="https://www.jd.com/" class="nav-card">
-                <i class="fa-solid fa-truck-fast"></i>
-                <h2>京东</h2>
-                <p>知名综合电商平台，商品品质有保障。</p>
-            </a>
-            <a href="https://www.tmall.com/" class="nav-card">
-                <i class="fa-solid fa-store"></i>
-                <h2>天猫</h2>
-                <p>知名的B2C购物平台，汇聚众多品牌商家。</p>
-            </a>
-            <a href="https://www.github.com/" class="nav-card">
-                <i class="fa-brands fa-github"></i>
-                <h2>GitHub</h2>
-                <p>全球最大的开源代码托管平台，开发者的聚集地。</p>
-            </a>
-            <a href="https://www.weibo.com/" class="nav-card">
-                <i class="fa-brands fa-weibo"></i>
-                <h2>微博</h2>
-                <p>信息传播与社交互动的重要平台。</p>
-            </a>
-			<a href="https://fanyi.baidu.com/" class="nav-card">
-                <i class="fa-solid fa-language"></i>
-                <h2>翻译</h2>
-                <p>百度翻译网站，提供便捷的翻译服务。</p>
-            </a>
-        </div>
-    </main>
-    <!-- 页脚 -->
-    <footer class="p-4">
-        <p>© 2025 EECO 导航. 保留所有权利.</p>
-    </footer>
+    </div>
+
+    <div id="todoPanel">
+        <h3>TODO <span style="float:right;cursor:pointer" id="closeTodo">×</span></h3>
+        <div><input type="text" id="todoInput" placeholder="新任务..."><button id="addTodoBtn">添加</button></div>
+        <div id="todoList"></div>
+    </div>
+
     <script>
-        const form = document.querySelector('.search-form');
-        const searchEngineSelect = document.getElementById('searchEngine');
-        const searchInput = form.querySelector('input[name="searchQuery"]');
-        const searchHistory = document.getElementById('search-history').querySelector('ul');
-        const searchHistoryDiv = document.getElementById('search-history');
+        const body = document.body;
+        const defaultBg = 'https://api.dujin.org/bing/1920.php';
+        const defaultIcon = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEycy00LjQ4IDEwLTEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0wIDE4Yy00LjQxIDAtOC0zLjU5LTgtOHMzLjU5LTggOC04IDggMy41OSA4IDggLTMuNTkgOC04IDh6IiBmaWxsPSIjODg4Ij48L3BhdGg+PC9zdmc+';
 
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const selectedEngine = searchEngineSelect.value;
-            const searchQuery = searchInput.value;
-            const searchUrl = selectedEngine + encodeURIComponent(searchQuery);
+        const defaultCategories = {
+            "常用网站": ["百度|https://www.baidu.com","腾讯|https://www.qq.com","淘宝|https://www.taobao.com","京东|https://www.jd.com","新浪|https://www.sina.com.cn","网易|https://www.163.com","哔哩哔哩|https://www.bilibili.com","知乎|https://www.zhihu.com","抖音|https://www.douyin.com","微博|https://www.weibo.com"].map(s=>({name:s.split('|')[0],url:s.split('|')[1]})),
+            "工具": ["百度翻译|https://fanyi.baidu.com","有道翻译|https://fanyi.youdao.com","Iconfont|https://www.iconfont.cn","TinyPNG|https://tinypng.com","iLovePDF|https://www.ilovepdf.com","工具箱|https://tool.lu","Remove.bg|https://www.remove.bg","JSON格式化|https://www.json.cn","二维码生成|https://cli.im"].map(s=>({name:s.split('|')[0],url:s.split('|')[1]})),
+            "开发": ["Gitee|https://gitee.com","CSDN|https://www.csdn.net","掘金|https://juejin.cn","菜鸟教程|https://www.runoob.com","MDN中文|https://developer.mozilla.org/zh-CN/"].map(s=>({name:s.split('|')[0],url:s.split('|')[1]})),
+            "学习": ["菜鸟教程|https://www.runoob.com","力扣中国|https://leetcode.cn","中国大学MOOC|https://www.icourse163.org","微信读书|https://weread.qq.com","B站教程区|https://www.bilibili.com"].map(s=>({name:s.split('|')[0],url:s.split('|')[1]})),
+            "社交": ["豆瓣|https://www.douban.com","小红书|https://www.xiaohongshu.com","微博|https://www.weibo.com","抖音|https://www.douyin.com","知乎|https://www.zhihu.com"].map(s=>({name:s.split('|')[0],url:s.split('|')[1]})),
+            "购物": ["淘宝|https://www.taobao.com","京东|https://www.jd.com","拼多多|https://www.pinduoduo.com","天猫|https://www.tmall.com","唯品会|https://www.vip.com"].map(s=>({name:s.split('|')[0],url:s.split('|')[1]})),
+            "娱乐": ["网易云音乐|https://music.163.com","QQ音乐|https://y.qq.com","爱奇艺|https://www.iqiyi.com","腾讯视频|https://v.qq.com","优酷|https://www.youku.com","哔哩哔哩|https://www.bilibili.com","WeGame|https://www.wegame.com.cn"].map(s=>({name:s.split('|')[0],url:s.split('|')[1]}))
+        };
 
-            // 添加搜索记录到历史记录
-            if (searchQuery) {
-                addSearchHistory(searchQuery);
+        // 自动定位天气
+        let currentCity = localStorage.getItem('weatherCity') || null;
+
+        async function updateWeather(cityName) {
+            try {
+                const res = await fetch(`https://wttr.in/${encodeURIComponent(cityName)}?format=%t+%c&lang=zh`);
+                const text = await res.text();
+                document.getElementById('weather').innerHTML = `🌤️ ${cityName}: ${text.trim() || '晴朗'}`;
+            } catch {
+                document.getElementById('weather').innerHTML = `🌤️ ${cityName}: 获取失败`;
             }
+        }
 
-            window.location.href = searchUrl;
+        function autoLocateWeather() {
+            document.getElementById('weather').textContent = '正在定位...';
+            if (!navigator.geolocation) {
+                fallbackWeather();
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(async pos => {
+                const { latitude, longitude } = pos.coords;
+                try {
+                    const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=zh`);
+                    const data = await res.json();
+                    const city = data.city || data.locality || data.principalSubdivision || '未知城市';
+                    currentCity = city;
+                    localStorage.setItem('weatherCity', city);
+                    updateWeather(city);
+                } catch {
+                    fallbackWeather();
+                }
+            }, fallbackWeather);
+        }
+
+        function fallbackWeather() {
+            currentCity = currentCity || '北京';
+            localStorage.setItem('weatherCity', currentCity);
+            updateWeather(currentCity);
+        }
+
+        document.getElementById('weather').onclick = () => {
+            const newCity = prompt('输入城市名称（如：上海、广州、香港）', currentCity);
+            if (newCity && newCity !== currentCity) {
+                currentCity = newCity;
+                localStorage.setItem('weatherCity', newCity);
+                updateWeather(newCity);
+            }
+        };
+
+        autoLocateWeather();
+
+        // 其余功能保持精简稳定
+        body.style.backgroundImage = `url('${localStorage.getItem('customBg')||defaultBg}')`;
+
+        if (localStorage.getItem('darkMode')==='enabled') {
+            body.classList.add('dark-mode');
+            document.getElementById('themeIcon').classList.replace('fa-moon','fa-sun');
+        }
+        document.getElementById('themeToggle').addEventListener('change', () => {
+            body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', body.classList.contains('dark-mode')?'enabled':'disabled');
+            document.getElementById('themeIcon').classList.toggle('fa-moon');
+            document.getElementById('themeIcon').classList.toggle('fa-sun');
         });
 
-        searchInput.addEventListener('focus', function () {
-            if (getSearchHistory().length > 0) {
-                searchHistoryDiv.style.display = 'block';
-            }
+        document.getElementById('bgUpload').addEventListener('change', e => {
+            const f = e.target.files[0]; if (!f) return;
+            const r = new FileReader(); r.onload = ev => { body.style.backgroundImage = `url('${ev.target.result}')`; localStorage.setItem('customBg', ev.target.result); }; r.readAsDataURL(f);
         });
 
-        searchInput.addEventListener('blur', function () {
+        (async () => {
+            try {
+                const res = await fetch('https://v1.hitokoto.cn/?c=a&c=b&c=c&c=d&c=i&c=k');
+                const d = await res.json();
+                document.getElementById('hitokoto').textContent = `「${d.hitokoto}」`;
+                document.getElementById('hitokoto_source').textContent = `—— ${d.from_who||'未知'} 《${d.from}》`;
+            } catch { document.getElementById('hitokoto').textContent = '今天也要开心哦～'; }
+        })();
+        document.getElementById('hitokotoWrapper').onclick = () => location.reload();
+
+        const updateTime = () => document.getElementById('time').textContent = new Date().toLocaleString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+        updateTime(); setInterval(updateTime,1000);
+
+        // 搜索历史功能
+        // 格式化时间显示
+        const formatSearchTime = (timestamp) => {
+            const now = new Date();
+            const searchDate = new Date(timestamp);
+            const diffMs = now - searchDate;
+            const diffSec = Math.floor(diffMs / 1000);
+            const diffMin = Math.floor(diffSec / 60);
+            const diffHour = Math.floor(diffMin / 60);
+            const diffDay = Math.floor(diffHour / 24);
+            
+            if (diffSec < 60) return '刚刚';
+            if (diffMin < 60) return `${diffMin}分钟前`;
+            if (diffHour < 24) return `${diffHour}小时前`;
+            if (diffDay < 7) return `${diffDay}天前`;
+            return searchDate.toLocaleDateString('zh-CN');
+        };
+        
+        // 删除单个搜索记录
+        const deleteSearchHistoryItem = (keyword) => {
+            let history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+            
+            // 处理旧数据结构（字符串数组）
+            if (history.length > 0 && typeof history[0] === 'string') {
+                history = history.filter(item => item !== keyword);
+            } else {
+                history = history.filter(item => item.keyword !== keyword);
+            }
+            
+            localStorage.setItem('searchHistory', JSON.stringify(history));
+            renderHistory();
+        };
+        
+        // 渲染搜索历史
+        const renderHistory = () => {
+            const history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+            const container = document.getElementById('searchHistory');
+            container.innerHTML = '';
+            
+            if (history.length === 0) return;
+            
+            // 创建搜索历史容器
+            const historyWrapper = document.createElement('div');
+            historyWrapper.className = 'search-history-wrapper';
+            
+            // 转换旧数据结构（字符串数组）为新结构（对象数组）
+            const formattedHistory = history.map(item => {
+                if (typeof item === 'string') {
+                    return { keyword: item, timestamp: Date.now() };
+                }
+                return item;
+            });
+            
+            // 按时间倒序排序
+            formattedHistory.sort((a, b) => b.timestamp - a.timestamp);
+            
+            // 渲染搜索记录项
+            formattedHistory.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                
+                // 搜索关键词
+                const keywordSpan = document.createElement('span');
+                keywordSpan.className = 'history-keyword';
+                keywordSpan.textContent = item.keyword;
+                keywordSpan.onclick = () => {
+                    document.getElementById('query').value = item.keyword;
+                    document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+                };
+                
+                // 搜索时间
+                const timeSpan = document.createElement('span');
+                timeSpan.className = 'history-time';
+                timeSpan.textContent = formatSearchTime(item.timestamp);
+                
+                // 删除按钮
+                const deleteBtn = document.createElement('span');
+                deleteBtn.className = 'history-delete';
+                deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation(); // 阻止冒泡
+                    deleteSearchHistoryItem(item.keyword);
+                };
+                
+                historyItem.appendChild(keywordSpan);
+                historyItem.appendChild(timeSpan);
+                historyItem.appendChild(deleteBtn);
+                historyWrapper.appendChild(historyItem);
+            });
+            
+            // 清空所有按钮
+            const clearBtn = document.createElement('div');
+            clearBtn.className = 'clear-history';
+            clearBtn.innerHTML = '<i class="fas fa-trash"></i> 清空历史';
+            clearBtn.onclick = () => {
+                if (confirm('确定要清空所有搜索记录吗？')) {
+                    localStorage.removeItem('searchHistory');
+                    renderHistory();
+                }
+            };
+            
+            container.appendChild(historyWrapper);
+            container.appendChild(clearBtn);
+        };
+        
+        // 获取搜索输入框和搜索历史容器的引用
+        const searchInput = document.getElementById('query');
+        const searchHistoryContainer = document.getElementById('searchHistory');
+        
+        // 显示搜索历史
+        const showSearchHistory = () => {
+            searchHistoryContainer.style.display = 'block';
+        };
+        
+        // 隐藏搜索历史
+        const hideSearchHistory = () => {
+            searchHistoryContainer.style.display = 'none';
+        };
+        
+        // 初始状态：隐藏搜索历史
+        hideSearchHistory();
+        
+        // 输入框焦点事件：显示搜索历史
+        searchInput.addEventListener('focus', () => {
+            showSearchHistory();
+        });
+        
+        // 输入框失焦事件：延迟隐藏搜索历史，以便点击事件能够触发
+        searchInput.addEventListener('blur', () => {
             setTimeout(() => {
-                searchHistoryDiv.style.display = 'none';
+                hideSearchHistory();
             }, 200);
         });
+        
+        // 阻止搜索历史容器的事件冒泡，确保点击搜索记录时不会触发失焦事件
+        searchHistoryContainer.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+        
+        renderHistory();
 
-        function addSearchHistory(query) {
-            const historyList = getSearchHistory();
-            if (!historyList.includes(query)) {
-                historyList.unshift(query);
-                if (historyList.length > 5) {
-                    historyList.pop();
-                }
-                localStorage.setItem('searchHistory', JSON.stringify(historyList));
-                renderSearchHistory();
+        document.getElementById('searchForm').onsubmit = e => {
+            e.preventDefault();
+            let q = document.getElementById('query').value.trim(); if (!q) return;
+            let h = JSON.parse(localStorage.getItem('searchHistory')||'[]');
+            
+            // 转换旧数据结构（字符串数组）为新结构（对象数组）
+            if (h.length > 0 && typeof h[0] === 'string') {
+                h = h.map(item => ({ keyword: item, timestamp: Date.now() }));
             }
-        }
+            
+            // 检查是否已存在相同的搜索记录，如果存在则更新时间戳
+            const existingIndex = h.findIndex(item => item.keyword === q);
+            if (existingIndex !== -1) {
+                h[existingIndex].timestamp = Date.now();
+            } else {
+                // 添加新的搜索记录
+                h.push({ keyword: q, timestamp: Date.now() });
+                
+                // 保持最多10条记录
+                if (h.length > 10) {
+                    h.shift();
+                }
+            }
+            
+            localStorage.setItem('searchHistory', JSON.stringify(h));
+            renderHistory();
+            
+            const eng = document.getElementById('engine').value;
+            const urls = {baidu:`https://www.baidu.com/s?wd=${encodeURIComponent(q)}`,bing:`https://www.bing.com/search?q=${encodeURIComponent(q)}`,google:`https://www.google.com/search?q=${encodeURIComponent(q)}`,yandex:`https://yandex.com/search/?text=${encodeURIComponent(q)}`,360:`https://www.so.com/s?q=${encodeURIComponent(q)}`};
+            window.open(urls[eng]||urls.baidu,'_blank');
+        };
 
-        function getSearchHistory() {
-            return JSON.parse(localStorage.getItem('searchHistory')) || [];
-        }
+        const modal = document.getElementById('addLinkModal');
+        document.getElementById('addLinkBtn').onclick = () => modal.style.display='flex';
+        document.getElementById('cancelLink').onclick = () => modal.style.display='none';
+        modal.onclick = e => { if (e.target===modal) modal.style.display='none'; };
+        document.getElementById('linkCategory').onchange = () => document.getElementById('newCategory').style.display = this.value==='自定义'?'block':'none';
+        document.getElementById('saveLink').onclick = () => {
+            const name = document.getElementById('linkName').value.trim();
+            const url = document.getElementById('linkUrl').value.trim();
+            let cat = document.getElementById('linkCategory').value;
+            if (cat==='自定义') cat = document.getElementById('newCategory').value.trim()||'自定义分类';
+            if (!name||!url) return alert('请填写完整');
+            const c = JSON.parse(localStorage.getItem('customLinks')||'{}');
+            if (!c[cat]) c[cat]=[];
+            c[cat].push({name,url,custom:true});
+            localStorage.setItem('customLinks',JSON.stringify(c));
+            renderCategories(); modal.style.display='none';
+            document.getElementById('linkName').value=document.getElementById('linkUrl').value=document.getElementById('newCategory').value='';
+        };
 
-        function renderSearchHistory() {
-            const historyList = getSearchHistory();
-            searchHistory.innerHTML = '';
-            historyList.forEach(query => {
-                const li = document.createElement('li');
-                li.textContent = query;
-
-                li.addEventListener('click', () => {
-                    const selectedEngine = searchEngineSelect.value;
-                    const searchUrl = selectedEngine + encodeURIComponent(query);
-                    window.location.href = searchUrl;
-                });
-                searchHistory.appendChild(li);
+        const todoPanel = document.getElementById('todoPanel');
+        document.getElementById('todoBtn').onclick = () => { todoPanel.style.display = todoPanel.style.display==='block'?'none':'block'; renderTodos(); };
+        document.getElementById('closeTodo').onclick = () => todoPanel.style.display='none';
+        const renderTodos = () => {
+            const list = document.getElementById('todoList');
+            const todos = JSON.parse(localStorage.getItem('todos')||'[]');
+            list.innerHTML=''; todos.forEach((t,i)=>{
+                const d=document.createElement('div'); d.className='todo-item'+(t.completed?' completed':'');
+                d.innerHTML=`<input type="checkbox" ${t.completed?'checked':''} onchange="toggleTodo(${i})"><span>${t.text}</span><button onclick="deleteTodo(${i})">&times;</button>`;
+                list.appendChild(d);
             });
+        };
+        document.getElementById('addTodoBtn').onclick = () => {
+            const text = document.getElementById('todoInput').value.trim(); if (!text) return;
+            const todos = JSON.parse(localStorage.getItem('todos')||'[]'); todos.push({text,completed:false});
+            localStorage.setItem('todos',JSON.stringify(todos)); document.getElementById('todoInput').value=''; renderTodos();
+        };
+        window.toggleTodo = i => { const todos=JSON.parse(localStorage.getItem('todos')||'[]'); todos[i].completed=!todos[i].completed; localStorage.setItem('todos',JSON.stringify(todos)); renderTodos(); };
+        window.deleteTodo = i => { const todos=JSON.parse(localStorage.getItem('todos')||'[]'); todos.splice(i,1); localStorage.setItem('todos',JSON.stringify(todos)); renderTodos(); };
+
+        function getAll() {
+            const custom = JSON.parse(localStorage.getItem('customLinks') || '{}');
+            const all = JSON.parse(JSON.stringify(defaultCategories));
+            Object.keys(custom).forEach(cat => {
+                if (!all[cat]) all[cat] = [];
+                all[cat].push(...custom[cat]);
+            });
+            return all;
         }
 
-        function updateTime() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            const timeString = `${hours}:${minutes}:${seconds}`;
-            document.getElementById('time-display').textContent = timeString;
+        function renderCategories() {
+            const div = document.getElementById('categories'); div.innerHTML = '';
+            const all = getAll();
+            Object.keys(defaultCategories).forEach(cat => renderCat(cat, all[cat]||[]));
+            Object.keys(all).forEach(cat => { if (!defaultCategories[cat]) renderCat(cat, all[cat]); });
         }
 
-        // 初始调用
-        updateTime();
-        // 每秒更新一次时间
-        setInterval(updateTime, 1000);
+        function renderCat(name, links) {
+            const div = document.createElement('div'); div.className = 'category';
+            div.innerHTML = `<h3 onclick="this.parentNode.querySelector('.links').classList.toggle('hidden');this.querySelector('i').classList.toggle('fa-chevron-down').classList.toggle('fa-chevron-up')">${name} <i class="fas fa-chevron-down"></i></h3><div class="links"></div>`;
+            const linksDiv = div.querySelector('.links');
+            links.forEach(link => {
+                const a = document.createElement('a');
+                a.href = link.url; a.target = '_blank';
+                a.className = 'link-item' + (link.custom?' custom':'');
+                a.innerHTML = `<img src="${link.url}/favicon.ico" onerror="this.src='${defaultIcon}';this.onerror=null;" alt="${link.name}"><span>${link.name}</span>`;
+                if (link.custom) a.addEventListener('click', e => { if (e.offsetX > a.clientWidth-30 && e.offsetY <30) { e.preventDefault(); if (confirm('删除？')) deleteCustom(name, link.name); }});
+                linksDiv.appendChild(a);
+            });
+            document.getElementById('categories').appendChild(div);
+        }
 
-        // 页面加载时渲染搜索历史记录
-        renderSearchHistory();
+        function deleteCustom(cat, name) {
+            const c = JSON.parse(localStorage.getItem('customLinks')||'{}');
+            if (c[cat]) { c[cat] = c[cat].filter(l=>l.name!==name); if (!c[cat].length) delete c[cat]; localStorage.setItem('customLinks', JSON.stringify(c)); }
+            renderCategories();
+        }
+
+        renderCategories();
     </script>
 </body>
-
 </html>
-    
