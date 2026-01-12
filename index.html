@@ -881,7 +881,7 @@
                 <label class="control-btn" title="上传背景"><i class="fas fa-camera"></i><input type="file" id="bgUpload" accept="image/*" hidden></label>
                 <button class="control-btn" id="addLinkBtn" title="添加链接"><i class="fas fa-plus"></i></button>
                 <button class="control-btn" id="todoBtn" title="TODO"><i class="fas fa-clipboard-list"></i></button>
-                <a href="about.html" class="control-btn" title="关于" target="_blank"><i class="fas fa-info-circle"></i></a>
+                <a href="about.html" class="control-btn" title="关于"><i class="fas fa-info-circle"></i></a>
             </div>
             <h1>EECO导航</h1>
         </div>
@@ -1210,7 +1210,7 @@
             
             const eng = document.getElementById('engine').value;
             const urls = {baidu:`https://www.baidu.com/s?wd=${encodeURIComponent(q)}`,bing:`https://www.bing.com/search?q=${encodeURIComponent(q)}`,google:`https://www.google.com/search?q=${encodeURIComponent(q)}`,yandex:`https://yandex.com/search/?text=${encodeURIComponent(q)}`,360:`https://www.so.com/s?q=${encodeURIComponent(q)}`};
-            window.open(urls[eng]||urls.baidu,'_blank');
+            window.location.href = urls[eng]||urls.baidu;
         };
 
         const modal = document.getElementById('addLinkModal');
@@ -1275,7 +1275,7 @@
             const linksDiv = div.querySelector('.links');
             links.forEach(link => {
                 const a = document.createElement('a');
-                a.href = link.url; a.target = '_blank';
+                a.href = link.url; a.target = '_self';
                 a.className = 'link-item' + (link.custom?' custom':'');
                 a.innerHTML = `<img src="${link.url}/favicon.ico" onerror="this.src='${defaultIcon}';this.onerror=null;" alt="${link.name}"><span>${link.name}</span>`;
                 if (link.custom) a.addEventListener('click', e => { if (e.offsetX > a.clientWidth-30 && e.offsetY <30) { e.preventDefault(); if (confirm('删除？')) deleteCustom(name, link.name); }});
