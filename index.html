@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EECO导航</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEycy00LjQ4IDEwLTEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0wIDE4Yy00LjQxIDAtOC0zLjU5LTgtOHMzLjU5LTggOC04IDggMy41OSA4IDggLTMuNTkgOC04IDh6IiBmaWxsPSIjODg4Ij48L3BhdGg+PC9zdmc+">
+
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
@@ -185,12 +185,16 @@
         .search-icon {
             position: absolute;
             left: 24px;
-            top: 50%;
+            top: 25px;
             transform: translateY(-50%);
             color: #555;
             font-size: 1.3em;
             pointer-events: none;
             transition: color 0.3s ease;
+            z-index: 2;
+        }
+        body.dark-mode .search-icon {
+            color: #aaa;
         }
         .search-input {
             flex: 1;
@@ -765,14 +769,24 @@
                 border-top: 1px solid rgba(200, 200, 200, 0.4);
                 border-bottom: 1px solid rgba(200, 200, 200, 0.4);
                 border-radius: 0;
-                padding: 20px 45px 20px 24px;
-                font-size: 1.1em;
+                padding: 18px 45px 18px 56px;
+                font-size: 1.05em;
+                background-color: rgba(255, 255, 255, 0.95);
+                box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+            }
+            .search-select:hover {
+                background-color: rgba(255, 255, 255, 0.98);
             }
             body.dark-mode .search-select {
                 border-top: 1px solid rgba(120, 120, 120, 0.4);
                 border-bottom: 1px solid rgba(120, 120, 120, 0.4);
                 border-left: none;
                 border-right: none;
+                background-color: rgba(60, 60, 60, 0.95);
+                box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+            }
+            body.dark-mode .search-select:hover {
+                background-color: rgba(70, 70, 70, 0.98);
             }
             .search-button {
                 border-radius: 0 0 24px 24px;
@@ -949,8 +963,8 @@
 
         const defaultCategories = {
             "常用网站": ["百度|https://www.baidu.com","腾讯|https://www.qq.com","淘宝|https://www.taobao.com","京东|https://www.jd.com","新浪|https://www.sina.com.cn","网易|https://www.163.com","哔哩哔哩|https://www.bilibili.com","知乎|https://www.zhihu.com","抖音|https://www.douyin.com","微博|https://www.weibo.com"].map(s=>({name:s.split('|')[0],url:s.split('|')[1]})),
-            "工具": ["百度翻译|https://fanyi.baidu.com","有道翻译|https://fanyi.youdao.com","Iconfont|https://www.iconfont.cn","TinyPNG|https://tinypng.com","iLovePDF|https://www.ilovepdf.com","工具箱|https://tool.lu","Remove.bg|https://www.remove.bg","JSON格式化|https://www.json.cn","二维码生成|https://cli.im"].map(s=>({name:s.split('|')[0],url:s.split('|')[1]})),
-            "开发": ["Gitee|https://gitee.com","CSDN|https://www.csdn.net","掘金|https://juejin.cn","菜鸟教程|https://www.runoob.com","MDN中文|https://developer.mozilla.org/zh-CN/"].map(s=>({name:s.split('|')[0],url:s.split('|')[1]})),
+            "工具": ["百度翻译|https://fanyi.baidu.com","有道翻译|https://fanyi.youdao.com","Iconfont|https://www.iconfont.cn","iLovePDF|https://www.ilovepdf.com","工具箱|https://tool.lu","Remove.bg|https://www.remove.bg","JSON格式化|https://www.json.cn","二维码生成|https://cli.im"].map(s=>({name:s.split('|')[0],url:s.split('|')[1]})),
+            "开发": ["Gitee|https://gitee.com","CSDN|https://www.csdn.net","菜鸟教程|https://www.runoob.com","MDN中文|https://developer.mozilla.org/zh-CN/"].map(s=>({name:s.split('|')[0],url:s.split('|')[1]})),
             "学习": ["菜鸟教程|https://www.runoob.com","力扣中国|https://leetcode.cn","中国大学MOOC|https://www.icourse163.org","微信读书|https://weread.qq.com","B站教程区|https://www.bilibili.com"].map(s=>({name:s.split('|')[0],url:s.split('|')[1]})),
             "社交": ["豆瓣|https://www.douban.com","小红书|https://www.xiaohongshu.com","微博|https://www.weibo.com","抖音|https://www.douyin.com","知乎|https://www.zhihu.com"].map(s=>({name:s.split('|')[0],url:s.split('|')[1]})),
             "购物": ["淘宝|https://www.taobao.com","京东|https://www.jd.com","拼多多|https://www.pinduoduo.com","天猫|https://www.tmall.com","唯品会|https://www.vip.com"].map(s=>({name:s.split('|')[0],url:s.split('|')[1]})),
@@ -1269,6 +1283,14 @@
             Object.keys(all).forEach(cat => { if (!defaultCategories[cat]) renderCat(cat, all[cat]); });
         }
 
+        // 图标映射表，为特定网站提供可靠的图标URL
+        const iconMap = {
+            "https://www.qq.com": "https://mat1.gtimg.com/qqcdn/qqindex2021/favicon.ico",
+            "https://www.icourse163.org": "https://edu-image.nosdn.127.net/32a8dd2a-b9aa-4ec9-abd5-66cd8751befb.png?imageView&quality=100",
+            "https://www.pinduoduo.com": "https://www.pinduoduo.com/favicon.png",
+            "https://developer.mozilla.org/zh-CN/": "https://developer.mozilla.org/favicon.ico"
+        };
+
         function renderCat(name, links) {
             const div = document.createElement('div'); div.className = 'category';
             div.innerHTML = `<h3 onclick="this.parentNode.querySelector('.links').classList.toggle('hidden');this.querySelector('i').classList.toggle('fa-chevron-down').classList.toggle('fa-chevron-up')">${name} <i class="fas fa-chevron-down"></i></h3><div class="links"></div>`;
@@ -1277,7 +1299,9 @@
                 const a = document.createElement('a');
                 a.href = link.url; a.target = '_self';
                 a.className = 'link-item' + (link.custom?' custom':'');
-                a.innerHTML = `<img src="${link.url}/favicon.ico" onerror="this.src='${defaultIcon}';this.onerror=null;" alt="${link.name}"><span>${link.name}</span>`;
+                // 使用图标映射表获取可靠的图标URL
+                const iconUrl = iconMap[link.url] || `${link.url}/favicon.ico`;
+                a.innerHTML = `<img src="${iconUrl}" onerror="this.src='${defaultIcon}';this.onerror=null;" alt="${link.name}"><span>${link.name}</span>`;
                 if (link.custom) a.addEventListener('click', e => { if (e.offsetX > a.clientWidth-30 && e.offsetY <30) { e.preventDefault(); if (confirm('删除？')) deleteCustom(name, link.name); }});
                 linksDiv.appendChild(a);
             });
