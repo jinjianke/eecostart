@@ -2,6 +2,8 @@
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import type { SearchHistoryItem } from '../types'
+import { getSavedWeatherCity, getWeather } from '../lib/weather'
+import { fetchWithTimeout } from '../lib/remote'
 import { SearchBox, SearchHint } from './SearchBox'
 
 interface HeroProps {
@@ -9,25 +11,56 @@ interface HeroProps {
   onHistoryChange: (history: SearchHistoryItem[]) => void
 }
 
+const fallbackQuotes = [
+  '去发现，去创造，去抵达尚未命名的明天。',
+  '保持好奇，持续构建。',
+  '每一次搜索，都是通往新世界的坐标。',
+  '今天也值得认真探索。',
+  '把灵感变成作品，把想法变成现实。',
+]
+
+function getFallbackQuote() {
+  return fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)]
+}
+
 export function Hero({ history, onHistoryChange }: HeroProps) {
   const [now, setNow] = useState(new Date())
-  const [quote, setQuote] = useState('去发现，去创造，去抵达尚未命名的明天。')
-  const [weather, setWeather] = useState('探索模式已就绪')
+  const [quote, setQuote] = useState(getFallbackQuote)
+  const [weather, setWeather] = useState(`${getSavedWeatherCity()} · 获取天气中…`)
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000)
-    fetch('https://v1.hitokoto.cn/?c=a&c=d&c=i&c=k')
-      .then((res) => res.json())
-      .then((data: { hitokoto?: string }) => data.hitokoto && setQuote(data.hitokoto))
-      .catch(() => undefined)
-    const city = localStorage.getItem('weatherCity')
-    if (city) {
-      fetch(`https://wttr.in/${encodeURIComponent(city)}?format=%t+%c&lang=zh`)
-        .then((res) => res.text())
-        .then((text) => setWeather(`${city} ${text.trim()}`))
-        .catch(() => undefined)
+    let cancelled = false
+
+    const loadQuote = async () => {
+      try {
+        const response = await fetchWithTimeout('https://v1.hitokoto.cn/?c=a&c=d&c=i&c=k', {
+          headers: { Accept: 'application/json' },
+        })
+        const data = (await response.json()) as { hitokoto?: string }
+        if (!cancelled && data.hitokoto?.trim()) setQuote(data.hitokoto.trim())
+      } catch {
+        if (!cancelled) setQuote(getFallbackQuote())
+      }
     }
-    return () => window.clearInterval(timer)
+
+    const loadWeather = async () => {
+      const city = getSavedWeatherCity()
+      try {
+        const snapshot = await getWeather(city)
+        if (!cancelled) setWeather(`${snapshot.city} · ${snapshot.temperature} · ${snapshot.description}`)
+      } catch {
+        if (!cancelled) setWeather(`${city} · 天气暂不可用`)
+      }
+    }
+
+    void loadQuote()
+    void loadWeather()
+
+    return () => {
+      cancelled = true
+      window.clearInterval(timer)
+    }
   }, [])
 
   const dateLabel = now.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'short' })
@@ -71,4 +104,3 @@ export function Hero({ history, onHistoryChange }: HeroProps) {
     </section>
   )
 }
-
