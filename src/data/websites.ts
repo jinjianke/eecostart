@@ -101,6 +101,7 @@ export const learningResources: Website[] = [
   site('deeplearning-ai', 'DeepLearning.AI', 'https://www.deeplearning.ai', 'Andrew Ng 团队打造的 AI 系统课程与专题。', ['课程', 'AI'], 'AI学习', '学习资源', 'DL', '#e54b4b', { featured: true }),
   site('hf-course', 'Hugging Face 教程', 'https://huggingface.co/learn', '从 Transformer 到 Agent 的开源实践课程。', ['开源', '实战'], 'AI学习', '学习资源', 'HF', '#f5b942'),
   site('openai-docs', 'OpenAI 官方文档', 'https://platform.openai.com/docs', '模型、API、工具与应用开发的官方指南。', ['官方', 'API'], 'AI学习', '学习资源', 'OA', '#10a37f'),
+  site('resource-planet', '资料星球 · AI 学习目录', 'https://resources.packscena.com/categories/ai/', '中文 AI 与编程学习资料目录，可按主题和关键词查找并预览条目信息，再通过各条目所列网盘领取。', ['中文', '资料目录'], 'AI学习', '学习资源', '资', '#b45c44', { logoUrl: 'https://resources.packscena.com/assets/favicon.svg' }),
   site('github-community', 'GitHub', 'https://github.com', '通过优秀项目、源码与讨论持续学习。', ['开源', '项目'], '开发社区', '学习资源', 'GH', '#111827'),
   site('juejin', '掘金', 'https://juejin.cn', '中文开发者内容、课程与技术交流社区。', ['中文', '文章'], '开发社区', '学习资源', '掘', '#1e80ff'),
   site('v2ex', 'V2EX', 'https://www.v2ex.com', '关于创造、技术与生活方式的开发者社区。', ['讨论', '创意'], '开发社区', '学习资源', 'V2', '#778087'),
